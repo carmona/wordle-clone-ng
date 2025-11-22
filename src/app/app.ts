@@ -4,6 +4,11 @@ import { RouterOutlet } from '@angular/router';
 import { Row, Cell } from './types';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { WORDS } from './words';
+
+const getRandomWord = (): string => {
+  return WORDS[Math.floor(Math.random() * WORDS.length)];
+}
 
 @Component({
   selector: 'app-root',
@@ -17,22 +22,21 @@ export class App {
   formDisabled: boolean = false;
   currentRow: number = 0;
   gameStatus: 'playing' | 'won' | 'lost' = 'playing';
-  chosenWord: string = 'world';
+  chosenWord: string = getRandomWord();
   rows: Row[] = Array.from({ length: 6 }, () => ({ cells: Array(5).fill({ letter: null, status: undefined }), isFilled: false }));
+
+  // OnInit() {
+  //   this.resetGame();
+  // }
 
   onSendInput(event: Event) {
     event.preventDefault();
     console.info('onSendInput', this.inputValue, event);
-    // this.formDisabled = true;
     this.updateMatrix(this.inputValue);
-    // this.formDisabled = false;
     this.inputValue = '';
-    // const input = event.target as HTMLInputElement;
-    // input.value = '';
   }
 
   checkGameStatus() {
-    // logic to check if the game is won or lost
     this.rows.forEach(row => {
       if (row.isFilled) {
         const guessedWord = this.cellsToWord(row.cells);
@@ -49,7 +53,6 @@ export class App {
     if (this.gameStatus !== 'playing') {
       this.formDisabled = true;
     }
-    // set focus back to input
     const inputElement = document.getElementById('word-input');
     if (inputElement) {
       inputElement.focus();
@@ -94,5 +97,6 @@ export class App {
     this.currentRow = 0;
     this.gameStatus = 'playing';
     this.formDisabled = false;
+    this.chosenWord = getRandomWord();
   }
 }
